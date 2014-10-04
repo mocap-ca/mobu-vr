@@ -77,22 +77,24 @@ bool ORToolView3D::FBCreate()
 	*/
 
 	// Init oculus
-	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-
-
-	// Get oculus device info
-	OVR::Ptr<OVR::DeviceManager> pManager;
-	OVR::Ptr<OVR::HMDDevice> pHMD;
-	pManager = *OVR::DeviceManager::Create();
-	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 
 	mLensSeperation = 0.0635f;
 	mHScreenSize = 0.149759993f;
 	mInterpupillaryDistance = 0.064f;
 	mOffset = 0.f;
+	StartSize[0] = 1280;
+	StartSize[1] = 800;
 
 
+#ifdef OCULUSSUPPORT
+	// Get oculus device info
+	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+	OVR::Ptr<OVR::DeviceManager> pManager;
+	OVR::Ptr<OVR::HMDDevice> pHMD;
+	pManager = *OVR::DeviceManager::Create();
+	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 	OVR::HMDInfo hmd;
+
 
 	if (pHMD && pHMD->GetDeviceInfo(&hmd))
 	{
@@ -114,13 +116,9 @@ bool ORToolView3D::FBCreate()
 		mInterpupillaryDistance = hmd.InterpupillaryDistance;
 
 		mOffset =  (mHScreenSize * 0.25f - mLensSeperation * 0.5f) / mHScreenSize * hmd.HResolution;
+	}
+#endif
 
-	}
-	else
-	{
-		StartSize[0] = 1280;
-		StartSize[1] = 800;
-	}
 
 	// Manage UI
 	UICreate	();
@@ -235,8 +233,9 @@ void ORToolView3D::FBDestroy()
 	OnInput.Remove	( this, (FBCallback) &ORToolView3D::EventToolInput	);
 	OnResize.Remove	( this, (FBCallback) &ORToolView3D::EventToolResize	);
 
+#ifdef OCULUSSUPPORT
 	OVR::System::Destroy();
-
+#endif
 	// Free user allocated memory
 }
 

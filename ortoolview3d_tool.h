@@ -49,7 +49,7 @@
 
 #include "ortoolview3d_view.h"
 
-#include "OVR.h"
+//#include "OVR.h"
 
 //--- Registration define
 #define ORTOOLVIEW3D__CLASSNAME	ORToolView3D
